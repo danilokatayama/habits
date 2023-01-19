@@ -4,6 +4,7 @@ import { generateDatesSinceYearBeginning } from "../utils/generate-dates-since-y
 
 import { HabitDay, DAY_SIZE } from "../components/HabitDay";
 import { Header } from "../components/Header";
+import { useNavigation } from "@react-navigation/native";
 
 const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 const summaryDates = generateDatesSinceYearBeginning()
@@ -12,6 +13,8 @@ const minimumSummaryDatesSize = 12 * 7 // 12 weeks
 const amountOfDaysToFill = minimumSummaryDatesSize - summaryDates.length
 
 export function Home() {
+  const { navigate } = useNavigation()
+
   return (
     <View className="flex-1 bg-background px-8 pt-16">
       <Header />
@@ -39,6 +42,9 @@ export function Home() {
             summaryDates.map(date => (
               <HabitDay
                 key={date.toISOString()}
+                onPress={() => navigate('habit', {
+                  date: date.toISOString()
+                })}
               />
             ))
           }
