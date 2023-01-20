@@ -1,21 +1,43 @@
 import { useState } from "react";
-import { View, ScrollView, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, ScrollView, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { BackButton } from "../components/BackButton";
 import { Checkbox } from "../components/Checkbox";
 import { Feather } from '@expo/vector-icons'
 
 import colors from 'tailwindcss/colors'
+import { api } from "../lib/axios";
 
-const availableWeekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const availableweekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export function NewHabit() {
-  const [weekdays, setWeekdays] = useState<number[]>([])
+  const [title, setTitle] = useState('')
+  const [weekDays, setWeekDays] = useState<number[]>([])
 
-  function handleToggleWeekday(weekdayIndex: number) {
-    if (weekdays.includes(weekdayIndex)) {
-      setWeekdays(prevState => prevState.filter(weekday => weekday !== weekdayIndex))
+  function handleToggleweekDay(weekDayIndex: number) {
+    if (weekDays.includes(weekDayIndex)) {
+      setWeekDays(prevState => prevState.filter(weekDay => weekDay !== weekDayIndex))
     } else {
-      setWeekdays(prevState => [...prevState, weekdayIndex])
+      setWeekDays(prevState => [...prevState, weekDayIndex])
+    }
+  }
+
+  async function handleCreateNewHabit() {
+    try {
+      if (!title.trim() || weekDays.length === 0) {
+        Alert.alert('New Habit', 'Inform the habit and choose the frequency')
+      }
+
+      await api.post('/habits', {
+        title,
+        weekDays
+      })
+
+      setTitle('')
+      setWeekDays([])
+
+      Alert.alert('New Habit', 'Habit successfully created!')
+    } catch(error) {
+      Alert.alert('Whoops', 'Something went wrong')
     }
   }
 
@@ -40,6 +62,8 @@ export function NewHabit() {
           className="h-12 pl-4 rounded-lg mt-3 bg-zinc-900 text-white border-2 border-zinc-800 focus:border-green-600"
           placeholder="ex.: Exercices, sleep well, ..."
           placeholderTextColor={colors.zinc[400]}
+          onChangeText={setTitle}
+          value={title}
         />
 
         <Text className="font-semibold mt-4 mb-3 text-white text-base">
@@ -47,13 +71,13 @@ export function NewHabit() {
         </Text>
 
         {
-          availableWeekdays.map((weekday, index) => {
+          availableweekDays.map((weekDay, index) => {
             return (
               <Checkbox
-                key={`${weekday}-${index}`}
-                title={weekday}
-                checked={weekdays.includes(index)}
-                onPress={() => handleToggleWeekday(index)}
+                key={`${weekDay}`}
+                title={weekDay}
+                checked={weekDays.includes(index)}
+                onPress={() => handleToggleweekDay(index)}
               />
             )
           })
