@@ -7,8 +7,8 @@ import { HabitDay, DAY_SIZE } from "../components/HabitDay";
 import { Header } from "../components/Header";
 import { Loading } from "../components/Loading";
 
-import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import dayjs from "dayjs";
 
 const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -36,15 +36,16 @@ export function Home() {
       const response = await api.get('/summary')
       setSummary(response.data)
     } catch(error) {
+      console.log(error)
       Alert.alert('Whoops', 'Something went wrong')
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     fethData()
-  }, [])
+  }, []))
 
   if (loading) {
     return (

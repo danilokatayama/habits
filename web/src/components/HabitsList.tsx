@@ -20,6 +20,7 @@ interface HabitsInfo {
 
 export function HabitsList({ date, onCompletedChanged }: HabitsListProps) {
   const [habitsInfo, setHabitsInfo] = useState<HabitsInfo>()
+  
   useEffect(() => {
     api.get('day', {
       params: {
